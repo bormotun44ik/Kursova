@@ -23,7 +23,7 @@ export default function RagPlayground() {
   const [time, setTime] = useState(0);
   const [paused, setPaused] = useState(false);
   const [typed, setTyped] = useState("");
-  const intervalRef = useRef<ReturnType<typeof setInterval>>();
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     intervalRef.current = setInterval(() => {

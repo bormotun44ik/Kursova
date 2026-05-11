@@ -63,8 +63,8 @@ export default function Hero() {
         {/* Right column — SVG pipeline schematic */}
         <div className="relative flex justify-center">
           <svg
-            viewBox="0 0 300 360"
-            className="w-full max-w-[300px]"
+            viewBox="0 0 320 360"
+            className="w-full max-w-[320px]"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -86,7 +86,7 @@ export default function Hero() {
             <rect x="70" y="30" width="160" height="50" stroke="var(--color-bl-cyan)" strokeWidth="1" />
             <text x="90" y="27" fill="var(--color-bl-cyan)" fontSize="9" fontFamily="var(--font-meta)" letterSpacing="0.15em">EMBED</text>
             <text x="150" y="58" fill="var(--color-bl-ink)" fontSize="13" fontFamily="var(--font-display)" textAnchor="middle" fontWeight="300">embed(query)</text>
-            <text x="242" y="60" fill="var(--color-bl-ink-4)" fontSize="9" fontFamily="var(--font-meta)">4096d</text>
+            {/* label moved to annotation line */}
 
             {/* Node: retrieve */}
             <rect x="70" y="140" width="160" height="60" stroke="var(--color-bl-cyan)" strokeWidth="1" />
@@ -99,9 +99,13 @@ export default function Hero() {
             <text x="90" y="257" fill="var(--color-bl-cyan)" fontSize="9" fontFamily="var(--font-meta)" letterSpacing="0.15em">GENERATE</text>
             <text x="150" y="290" fill="var(--color-bl-ink)" fontSize="13" fontFamily="var(--font-display)" textAnchor="middle" fontWeight="300">claude_sonnet()</text>
 
-            {/* Annotation arrows */}
-            <line x1="240" y1="55" x2="270" y2="55" stroke="var(--color-bl-cyan-dim)" strokeWidth="0.5" />
-            <line x1="240" y1="170" x2="270" y2="170" stroke="var(--color-bl-cyan-dim)" strokeWidth="0.5" />
+            {/* Annotations */}
+            <line x1="230" y1="55" x2="255" y2="55" stroke="var(--color-bl-cyan-dim)" strokeWidth="0.5" />
+            <text x="258" y="58" fill="var(--color-bl-ink-4)" fontSize="8" fontFamily="var(--font-meta)">4096d</text>
+            <line x1="230" y1="170" x2="255" y2="170" stroke="var(--color-bl-cyan-dim)" strokeWidth="0.5" />
+            <text x="258" y="173" fill="var(--color-bl-ink-4)" fontSize="8" fontFamily="var(--font-meta)">hybrid</text>
+            <line x1="230" y1="290" x2="255" y2="290" stroke="var(--color-bl-cyan-dim)" strokeWidth="0.5" />
+            <text x="258" y="293" fill="var(--color-bl-ink-4)" fontSize="8" fontFamily="var(--font-meta)">sonnet</text>
 
             {/* Pulses */}
             <circle r="3" fill="var(--color-bl-cyan)">
