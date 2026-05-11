@@ -1,34 +1,43 @@
 import FadeIn from "./FadeIn";
 import SectionHeader from "./SectionHeader";
+import Crosshairs from "./Crosshairs";
 
 const refs = [
-  'Lewis, P., Perez, E., Piktus, A., et al. (2020). "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks." Advances in Neural Information Processing Systems (NeurIPS).',
-  'Gao, Y., Xiong, Y., Gao, X., et al. (2024). "Retrieval-Augmented Generation for Large Language Models: A Survey." arXiv:2312.10997.',
-  'Yan, S., et al. (2024). "Corrective Retrieval Augmented Generation (CRAG)." arXiv:2401.15884.',
-  'Edge, D., Trinh, H., et al. (2024). "From Local to Global: A Graph RAG Approach to Query-Focused Summarization." Microsoft Research. arXiv:2404.16130.',
-  'Robertson, S., Zaragoza, H. (2009). "The Probabilistic Relevance Framework: BM25 and Beyond." Foundations and Trends in Information Retrieval.',
-  'Carbonell, J., Goldstein, J. (1998). "The Use of MMR, Diversity-Based Reranking for Reordering Documents and Producing Summaries." SIGIR.',
-  'Muennighoff, N., et al. (2023). "MTEB: Massive Text Embedding Benchmark." arXiv:2210.07316.',
-  `Проектна документация на система «Лилит» — вътрешна архитектурна референция, 2026.`,
+  { id: "lewis2020", cite: "Lewis et al. (2020)", title: "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks", venue: "NeurIPS" },
+  { id: "gao2024", cite: "Gao et al. (2024)", title: "Retrieval-Augmented Generation for Large Language Models: A Survey", venue: "arXiv:2312.10997" },
+  { id: "yan2024", cite: "Yan et al. (2024)", title: "Corrective Retrieval Augmented Generation (CRAG)", venue: "arXiv:2401.15884" },
+  { id: "edge2024", cite: "Edge et al. (2024)", title: "From Local to Global: A Graph RAG Approach", venue: "Microsoft Research" },
+  { id: "robertson2009", cite: "Robertson & Zaragoza (2009)", title: "The Probabilistic Relevance Framework: BM25 and Beyond", venue: "FnTIR" },
+  { id: "carbonell1998", cite: "Carbonell & Goldstein (1998)", title: "MMR Diversity-Based Reranking", venue: "SIGIR" },
+  { id: "muennighoff2023", cite: "Muennighoff et al. (2023)", title: "MTEB: Massive Text Embedding Benchmark", venue: "arXiv:2210.07316" },
+  { id: "lilith2026", cite: "Internal (2026)", title: "Проектна документация на система «Лилит»", venue: "Private" },
 ];
 
 export default function ReferencesSection() {
   return (
-    <section id="references" className="py-24 px-6">
+    <section id="references" className="relative py-20 md:py-28 px-8 md:px-14 bg-bl-paper-edge">
+      <Crosshairs />
       <div className="max-w-5xl mx-auto">
-        <SectionHeader number="07" title="Източници" />
+        <SectionHeader number="08" title="<strong>Източници</strong>" sheet="—" />
 
         <FadeIn>
-          <ol className="space-y-4 pl-6 list-decimal marker:text-accent marker:font-bold">
+          <div className="space-y-0">
             {refs.map((r, i) => (
-              <li
-                key={i}
-                className="text-text-muted text-sm leading-relaxed pl-2"
+              <div
+                key={r.id}
+                className={`flex items-start gap-4 py-3 ${i > 0 ? "border-t border-bl-cyan-trace" : ""}`}
               >
-                {r}
-              </li>
+                <span className="text-bl-cyan text-xs font-light shrink-0 w-6 text-right">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <div>
+                  <span className="text-bl-ink text-xs font-medium">{r.cite}</span>
+                  <span className="text-bl-ink-3 text-xs"> — {r.title}.</span>
+                  <span className="text-bl-ink-5 text-xs"> {r.venue}.</span>
+                </div>
+              </div>
             ))}
-          </ol>
+          </div>
         </FadeIn>
       </div>
     </section>

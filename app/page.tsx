@@ -1,6 +1,5 @@
 import Nav from "./components/Nav";
 import Hero from "./components/Hero";
-import ScrollProgress from "./components/ScrollProgress";
 import IntroSection from "./components/IntroSection";
 import WhatIsRagSection from "./components/WhatIsRagSection";
 import ComponentsSection from "./components/ComponentsSection";
@@ -14,7 +13,6 @@ export default function Home() {
   return (
     <>
       <Nav />
-      <ScrollProgress />
       <Hero />
       <IntroSection />
       <WhatIsRagSection />
@@ -24,17 +22,52 @@ export default function Home() {
       <ProsConsSection />
       <FutureSection />
       <ReferencesSection />
-      <footer className="py-16 border-t border-border text-center relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] bg-accent/5 rounded-full blur-[100px]" />
+
+      {/* Colophon footer */}
+      <footer className="relative py-12 px-8 md:px-14 bg-bl-paper-deep border-t border-bl-cyan-ghost">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-between gap-8">
+          <div>
+            <span
+              className="block text-[10px] tracking-[0.2em] uppercase text-bl-ink-4 mb-3"
+              style={{ fontFamily: "var(--font-meta)" }}
+            >
+              COLOPHON
+            </span>
+            <p className="text-bl-ink-3 text-xs leading-relaxed max-w-md">
+              Built with sqlite-vec, Gemini-2 Embeddings,
+              Claude Sonnet, JetBrains Mono.
+            </p>
+            <p className="text-bl-ink-5 text-[10px] mt-3" style={{ fontFamily: "var(--font-meta)" }}>
+              © 2026 · REV.A · 12.05.26
+            </p>
+          </div>
+          <div>
+            <span
+              className="block text-[10px] tracking-[0.2em] uppercase text-bl-ink-4 mb-3"
+              style={{ fontFamily: "var(--font-meta)" }}
+            >
+              SIGNALS
+            </span>
+            <div className="space-y-1.5 text-xs" style={{ fontFamily: "var(--font-meta)" }}>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-bl-ok" />
+                <span className="text-bl-ink-3">system online</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-bl-ok" />
+                <span className="text-bl-ink-3">index synced</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-bl-ok" />
+                <span className="text-bl-ink-3">graph 3 376</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="relative">
-          <p className="text-text-muted text-sm">
-            RAG системи: как езиковите модели използват външни източници на знания
-          </p>
-          <p className="text-text-dim text-xs mt-3">
-            Курсова работа &bull; Тема №4 &bull; 2026
-          </p>
+        <div className="max-w-5xl mx-auto mt-6 flex justify-end">
+          <span className="text-bl-ink-5 text-[9px]" style={{ fontFamily: "var(--font-meta)" }}>
+            COORD · X: 1440.00mm · Y: END
+          </span>
         </div>
       </footer>
     </>

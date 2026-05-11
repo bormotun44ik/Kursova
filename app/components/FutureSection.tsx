@@ -1,63 +1,32 @@
 import FadeIn from "./FadeIn";
 import SectionHeader from "./SectionHeader";
-import Stagger from "./Stagger";
+import Crosshairs from "./Crosshairs";
 
-const cards = [
-  {
-    icon: "🤖",
-    title: "Agentic RAG",
-    text: `AI агентите сами решават кога, какво и как да търсят. Итеративно усъвършенстват заявката си и комбинират резултати от множество източници. Системата «Лилит» е пример.`,
-    gradient: "from-accent/10 via-transparent to-transparent",
-  },
-  {
-    icon: "🔄",
-    title: "Self-Reflective Retrieval",
-    text: "Моделът оценява качеството на извлечените документи и може да реши да търси отново с променена заявка. CRAG и Self-RAG са водещи подходи.",
-    gradient: "from-accent-2/10 via-transparent to-transparent",
-  },
-  {
-    icon: "🌐",
-    title: "Multi-modal RAG",
-    text: "Извличане на информация от изображения, аудио, видео и таблици. GPT-4V и Gemini вече поддържат multi-modal reasoning.",
-    gradient: "from-green/10 via-transparent to-transparent",
-  },
-  {
-    icon: "🕸️",
-    title: "Graph RAG",
-    text: "Комбинация на графи на знания с векторно търсене. Microsoft Research показва значително подобрение при обобщение на големи корпуси.",
-    gradient: "from-yellow/10 via-transparent to-transparent",
-  },
+const items = [
+  { label: "AGENTIC", title: "Agentic RAG", desc: "Агентите сами решават кога и как да търсят. Итеративно усъвършенстват заявки." },
+  { label: "REFLECTIVE", title: "Self-Reflective Retrieval", desc: "Моделът оценява качеството на извлечените документи. CRAG, Self-RAG." },
+  { label: "MULTIMODAL", title: "Multi-modal RAG", desc: "Извличане от изображения, аудио, видео. GPT-4V, Gemini." },
+  { label: "GRAPH", title: "Graph RAG", desc: "Графи на знания + векторно търсене. Microsoft Research. Hybrid стандарт." },
 ];
 
 export default function FutureSection() {
   return (
-    <section id="future" className="py-28 px-6 bg-bg-alt relative overflow-hidden">
-      <div className="absolute inset-0 grid-bg opacity-30" />
+    <section id="future" className="relative py-20 md:py-28 px-8 md:px-14">
+      <Crosshairs />
+      <div className="max-w-5xl mx-auto">
+        <SectionHeader number="07" title="<strong>Бъдеще</strong> на RAG" sheet="08/08" />
 
-      <div className="max-w-5xl mx-auto relative">
-        <SectionHeader number="06" title="Бъдещето на RAG" />
-
-        <Stagger className="grid sm:grid-cols-2 gap-5">
-          {cards.map((c) => (
-            <div
-              key={c.title}
-              className="group glow-card bg-surface border border-border rounded-2xl p-8 hover:-translate-y-1 transition-all duration-300 cursor-default"
-            >
-              <div
-                className={`absolute inset-0 bg-gradient-to-br ${c.gradient} rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity`}
-              />
-              <div className="relative">
-                <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                  {c.icon}
-                </div>
-                <h3 className="text-xl font-bold mb-3">{c.title}</h3>
-                <p className="text-sm text-text-muted leading-relaxed">
-                  {c.text}
-                </p>
+        <div className="grid sm:grid-cols-2 gap-px bg-bl-cyan-ghost">
+          {items.map((item, i) => (
+            <FadeIn key={item.label} delay={i * 80}>
+              <div className="bg-bl-paper p-6 h-full">
+                <span className="meta text-[9px] text-bl-cyan block mb-3">{item.label}</span>
+                <h3 className="text-bl-ink text-sm font-medium mb-2">{item.title}</h3>
+                <p className="text-bl-ink-3 text-xs leading-relaxed">{item.desc}</p>
               </div>
-            </div>
+            </FadeIn>
           ))}
-        </Stagger>
+        </div>
       </div>
     </section>
   );
