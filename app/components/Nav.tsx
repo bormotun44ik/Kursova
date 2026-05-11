@@ -33,7 +33,7 @@ export default function Nav() {
   return (
     <nav className="fixed top-0 inset-x-0 h-14 z-50 flex items-center justify-between px-8 border-b border-bl-cyan-ghost bg-bl-paper/90 backdrop-blur-sm">
       <span className="text-bl-cyan text-xs tracking-[0.2em] uppercase" style={{ fontFamily: "var(--font-meta)" }}>
-        RAG · BLUEPRINT
+        RAG · СИСТЕМИ
       </span>
 
       <button

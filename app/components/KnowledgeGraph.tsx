@@ -19,94 +19,98 @@ export default function KnowledgeGraph() {
   const nodesRef = useRef<Node[]>([]);
   const hoveredRef = useRef<number | null>(null);
   const animRef = useRef<number>(0);
-  const initRef = useRef(false);
 
   useEffect(() => {
-    if (initRef.current) return;
-    initRef.current = true;
-
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const w = canvas.offsetWidth;
-    const h = canvas.offsetHeight;
-    canvas.width = w * 2;
-    canvas.height = h * 2;
 
-    nodesRef.current = labels.map((label, i) => ({
-      x: w * 0.15 + Math.random() * w * 0.7,
-      y: h * 0.15 + Math.random() * h * 0.7,
-      vx: (Math.random() - 0.5) * 0.15,
-      vy: (Math.random() - 0.5) * 0.15,
-      label,
-      size: i === 0 ? 7 : 3.5,
-    }));
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect();
+      const w = rect.width;
+      const h = rect.height;
+      if (w === 0 || h === 0) return;
 
-    const ctx = canvas.getContext("2d")!;
-    ctx.scale(2, 2);
+      canvas.width = w * 2;
+      canvas.height = h * 2;
 
-    const draw = () => {
-      const nodes = nodesRef.current;
-      const hovered = hoveredRef.current;
+      if (nodesRef.current.length === 0) {
+        nodesRef.current = labels.map((label, i) => ({
+          x: w * 0.15 + Math.random() * w * 0.7,
+          y: h * 0.15 + Math.random() * h * 0.7,
+          vx: (Math.random() - 0.5) * 0.15,
+          vy: (Math.random() - 0.5) * 0.15,
+          label,
+          size: i === 0 ? 7 : 3.5,
+        }));
+      }
 
-      ctx.clearRect(0, 0, w, h);
+      const ctx = canvas.getContext("2d")!;
+      ctx.setTransform(2, 0, 0, 2, 0, 0);
 
-      // Edges
-      edges.forEach(([a, b]) => {
-        const na = nodes[a], nb = nodes[b];
-        const lit = hovered === a || hovered === b;
-        ctx.beginPath();
-        ctx.moveTo(na.x, na.y);
-        ctx.lineTo(nb.x, nb.y);
-        ctx.strokeStyle = lit ? "rgba(92,220,255,0.4)" : "rgba(92,220,255,0.07)";
-        ctx.lineWidth = lit ? 1 : 0.5;
-        ctx.stroke();
-      });
+      cancelAnimationFrame(animRef.current);
 
-      // Nodes
-      nodes.forEach((n, i) => {
-        const isH = hovered === i;
-        const isNeighbor = !isH && edges.some(
-          ([a, b]) => (a === hovered && b === i) || (b === hovered && a === i)
-        );
-        const lit = isH || isNeighbor;
+      const draw = () => {
+        const nodes = nodesRef.current;
+        const hovered = hoveredRef.current;
 
-        // Glow
-        if (isH) {
+        ctx.clearRect(0, 0, w, h);
+
+        edges.forEach(([a, b]) => {
+          const na = nodes[a], nb = nodes[b];
+          const lit = hovered === a || hovered === b;
           ctx.beginPath();
-          ctx.arc(n.x, n.y, 20, 0, Math.PI * 2);
-          ctx.fillStyle = "rgba(92,220,255,0.08)";
+          ctx.moveTo(na.x, na.y);
+          ctx.lineTo(nb.x, nb.y);
+          ctx.strokeStyle = lit ? "rgba(92,220,255,0.4)" : "rgba(92,220,255,0.07)";
+          ctx.lineWidth = lit ? 1 : 0.5;
+          ctx.stroke();
+        });
+
+        nodes.forEach((n, i) => {
+          const isH = hovered === i;
+          const isNeighbor = !isH && edges.some(
+            ([a, b]) => (a === hovered && b === i) || (b === hovered && a === i)
+          );
+          const lit = isH || isNeighbor;
+
+          if (isH) {
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, 20, 0, Math.PI * 2);
+            ctx.fillStyle = "rgba(92,220,255,0.08)";
+            ctx.fill();
+          }
+
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, lit ? n.size * 1.5 : n.size, 0, Math.PI * 2);
+          ctx.fillStyle = lit ? "#5cdcff" : "rgba(92,220,255,0.2)";
           ctx.fill();
-        }
 
-        // Dot
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, lit ? n.size * 1.5 : n.size, 0, Math.PI * 2);
-        ctx.fillStyle = lit ? "#5cdcff" : "rgba(92,220,255,0.2)";
-        ctx.fill();
+          if (isH || isNeighbor || n.size > 5) {
+            ctx.font = `${isH ? "600 " : ""}11px 'IBM Plex Mono', monospace`;
+            ctx.fillStyle = isH ? "#eaf6fa" : isNeighbor ? "#7ba9b6" : "#5a8a96";
+            ctx.textAlign = "center";
+            ctx.fillText(n.label, n.x, n.y - (lit ? n.size * 1.5 : n.size) - 6);
+          }
 
-        // Label — always show for main node, on hover for others
-        if (isH || isNeighbor || n.size > 5) {
-          ctx.font = `${isH ? "600 " : ""}11px 'IBM Plex Mono', monospace`;
-          ctx.fillStyle = isH ? "#eaf6fa" : isNeighbor ? "#7ba9b6" : "#5a8a96";
-          ctx.textAlign = "center";
-          ctx.fillText(n.label, n.x, n.y - (lit ? n.size * 1.5 : n.size) - 6);
-        }
+          n.x += n.vx;
+          n.y += n.vy;
+          if (n.x < 30 || n.x > w - 30) n.vx *= -1;
+          if (n.y < 30 || n.y > h - 30) n.vy *= -1;
+          n.vx += (w / 2 - n.x) * 0.00002;
+          n.vy += (h / 2 - n.y) * 0.00002;
+          n.vx *= 0.999;
+          n.vy *= 0.999;
+        });
 
-        // Physics
-        n.x += n.vx;
-        n.y += n.vy;
-        if (n.x < 30 || n.x > w - 30) n.vx *= -1;
-        if (n.y < 30 || n.y > h - 30) n.vy *= -1;
-        n.vx += (w / 2 - n.x) * 0.00002;
-        n.vy += (h / 2 - n.y) * 0.00002;
-        n.vx *= 0.999;
-        n.vy *= 0.999;
-      });
+        animRef.current = requestAnimationFrame(draw);
+      };
 
-      animRef.current = requestAnimationFrame(draw);
+      draw();
     };
 
-    draw();
+    // Wait for layout
+    requestAnimationFrame(() => requestAnimationFrame(resize));
+
     return () => cancelAnimationFrame(animRef.current);
   }, []);
 
