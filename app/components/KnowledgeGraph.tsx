@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useCallback } from "react";
 
 interface Node { x: number; y: number; vx: number; vy: number; label: string; size: number; }
 
@@ -9,7 +9,7 @@ const labels = [
   "VectorDB", "Embeddings", "RRF", "Obsidian",
 ];
 
-const edges = [
+const edges: [number, number][] = [
   [0,1],[0,5],[0,7],[0,13],[1,2],[1,3],[1,10],
   [4,11],[5,9],[6,1],[8,2],[8,3],[9,6],[10,11],[11,4],[12,2],[12,3],
 ];
@@ -17,10 +17,14 @@ const edges = [
 export default function KnowledgeGraph() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const nodesRef = useRef<Node[]>([]);
-  const [hovered, setHovered] = useState<number | null>(null);
+  const hoveredRef = useRef<number | null>(null);
   const animRef = useRef<number>(0);
+  const initRef = useRef(false);
 
   useEffect(() => {
+    if (initRef.current) return;
+    initRef.current = true;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
     const w = canvas.offsetWidth;
@@ -29,64 +33,74 @@ export default function KnowledgeGraph() {
     canvas.height = h * 2;
 
     nodesRef.current = labels.map((label, i) => ({
-      x: w*0.15 + Math.random()*w*0.7,
-      y: h*0.15 + Math.random()*h*0.7,
-      vx: (Math.random()-0.5)*0.2,
-      vy: (Math.random()-0.5)*0.2,
+      x: w * 0.15 + Math.random() * w * 0.7,
+      y: h * 0.15 + Math.random() * h * 0.7,
+      vx: (Math.random() - 0.5) * 0.15,
+      vy: (Math.random() - 0.5) * 0.15,
       label,
-      size: i === 0 ? 6 : 3,
+      size: i === 0 ? 7 : 3.5,
     }));
 
     const ctx = canvas.getContext("2d")!;
     ctx.scale(2, 2);
 
-    const cyan = "#5cdcff";
-    const dim = "rgba(92,220,255,0.15)";
-    const edgeDim = "rgba(92,220,255,0.08)";
-    const edgeLit = "rgba(92,220,255,0.35)";
-
     const draw = () => {
       const nodes = nodesRef.current;
+      const hovered = hoveredRef.current;
+
       ctx.clearRect(0, 0, w, h);
 
-      edges.forEach(([a,b]) => {
+      // Edges
+      edges.forEach(([a, b]) => {
         const na = nodes[a], nb = nodes[b];
         const lit = hovered === a || hovered === b;
         ctx.beginPath();
         ctx.moveTo(na.x, na.y);
         ctx.lineTo(nb.x, nb.y);
-        ctx.strokeStyle = lit ? edgeLit : edgeDim;
+        ctx.strokeStyle = lit ? "rgba(92,220,255,0.4)" : "rgba(92,220,255,0.07)";
         ctx.lineWidth = lit ? 1 : 0.5;
         ctx.stroke();
       });
 
+      // Nodes
       nodes.forEach((n, i) => {
-        const isH = hovered === i || edges.some(([a,b]) => (a===hovered&&b===i)||(b===hovered&&a===i));
+        const isH = hovered === i;
+        const isNeighbor = !isH && edges.some(
+          ([a, b]) => (a === hovered && b === i) || (b === hovered && a === i)
+        );
+        const lit = isH || isNeighbor;
 
+        // Glow
         if (isH) {
           ctx.beginPath();
-          ctx.arc(n.x, n.y, n.size*3, 0, Math.PI*2);
-          ctx.fillStyle = "rgba(92,220,255,0.06)";
+          ctx.arc(n.x, n.y, 20, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(92,220,255,0.08)";
           ctx.fill();
         }
 
+        // Dot
         ctx.beginPath();
-        ctx.arc(n.x, n.y, n.size, 0, Math.PI*2);
-        ctx.fillStyle = isH ? cyan : dim;
+        ctx.arc(n.x, n.y, lit ? n.size * 1.5 : n.size, 0, Math.PI * 2);
+        ctx.fillStyle = lit ? "#5cdcff" : "rgba(92,220,255,0.2)";
         ctx.fill();
 
-        if (isH || n.size > 4) {
-          ctx.font = `${isH?"500 ":""}9px 'IBM Plex Mono', monospace`;
-          ctx.fillStyle = isH ? "#eaf6fa" : "#5a8a96";
+        // Label — always show for main node, on hover for others
+        if (isH || isNeighbor || n.size > 5) {
+          ctx.font = `${isH ? "600 " : ""}11px 'IBM Plex Mono', monospace`;
+          ctx.fillStyle = isH ? "#eaf6fa" : isNeighbor ? "#7ba9b6" : "#5a8a96";
           ctx.textAlign = "center";
-          ctx.fillText(n.label, n.x, n.y - n.size - 5);
+          ctx.fillText(n.label, n.x, n.y - (lit ? n.size * 1.5 : n.size) - 6);
         }
 
-        n.x += n.vx; n.y += n.vy;
-        if (n.x < 20 || n.x > w-20) n.vx *= -1;
-        if (n.y < 20 || n.y > h-20) n.vy *= -1;
-        n.vx += (w/2 - n.x) * 0.00003;
-        n.vy += (h/2 - n.y) * 0.00003;
+        // Physics
+        n.x += n.vx;
+        n.y += n.vy;
+        if (n.x < 30 || n.x > w - 30) n.vx *= -1;
+        if (n.y < 30 || n.y > h - 30) n.vy *= -1;
+        n.vx += (w / 2 - n.x) * 0.00002;
+        n.vy += (h / 2 - n.y) * 0.00002;
+        n.vx *= 0.999;
+        n.vy *= 0.999;
       });
 
       animRef.current = requestAnimationFrame(draw);
@@ -94,28 +108,33 @@ export default function KnowledgeGraph() {
 
     draw();
     return () => cancelAnimationFrame(animRef.current);
-  }, [hovered]);
+  }, []);
 
-  const onMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const onMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
     const mx = e.clientX - rect.left;
     const my = e.clientY - rect.top;
-    let closest = -1, minDist = 25;
+    let closest = -1;
+    let minDist = 30;
     nodesRef.current.forEach((n, i) => {
       const d = Math.hypot(n.x - mx, n.y - my);
       if (d < minDist) { minDist = d; closest = i; }
     });
-    setHovered(closest >= 0 ? closest : null);
-  };
+    hoveredRef.current = closest >= 0 ? closest : null;
+  }, []);
+
+  const onMouseLeave = useCallback(() => {
+    hoveredRef.current = null;
+  }, []);
 
   return (
     <canvas
       ref={canvasRef}
       onMouseMove={onMouseMove}
-      onMouseLeave={() => setHovered(null)}
-      className="w-full h-[280px] border border-bl-cyan-ghost cursor-crosshair bg-bl-paper-deep"
+      onMouseLeave={onMouseLeave}
+      className="w-full h-[320px] border border-bl-cyan-ghost cursor-crosshair bg-bl-paper-deep"
     />
   );
 }
