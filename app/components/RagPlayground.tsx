@@ -34,7 +34,7 @@ export default function RagPlayground() {
         });
       }
     }, 50);
-    return () => clearInterval(intervalRef.current);
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
   }, [paused]);
 
   useEffect(() => {
