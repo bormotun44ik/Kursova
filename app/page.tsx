@@ -5,6 +5,7 @@ import WhatIsRagSection from "./components/WhatIsRagSection";
 import ComponentsSection from "./components/ComponentsSection";
 import CaseStudySection from "./components/CaseStudySection";
 import RagPlayground from "./components/RagPlayground";
+import AiChat from "./components/AiChat";
 import ProsConsSection from "./components/ProsConsSection";
 import FutureSection from "./components/FutureSection";
 import ReferencesSection from "./components/ReferencesSection";
@@ -19,6 +20,7 @@ export default function Home() {
       <ComponentsSection />
       <CaseStudySection />
       <RagPlayground />
+      <AiChat />
       <ProsConsSection />
       <FutureSection />
       <ReferencesSection />
