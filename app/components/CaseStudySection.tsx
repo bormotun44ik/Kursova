@@ -122,19 +122,6 @@ export default function CaseStudySection() {
           </Block>
         </FadeIn>
 
-        {/* Code */}
-        <FadeIn>
-          <div>
-            <span className="meta text-[9px] text-bl-ink-4 block mb-3">IMPLEMENTATION · PLUGIN V3.2</span>
-            <div className="bl-log">
-              <div><span className="lv">HOOK</span> message_received → agentmemory/index.js</div>
-              <div><span className="ts">check</span><span className="lv">--</span> isSimpleGreeting(msg) ? skip : search</div>
-              <div><span className="ts">POST</span><span className="lv">OK</span> /agentmemory/smart-search query=... limit=8</div>
-              <div><span className="ts">filter</span><span className="lv">OK</span> results.filter(r =&gt; r.score &gt; 0.005)</div>
-              <div><span className="ts">inject</span><span className="lv">OK</span> injectIntoPrompt(truncateToTokenBudget(ctx))</div>
-            </div>
-          </div>
-        </FadeIn>
       </div>
     </section>
   );

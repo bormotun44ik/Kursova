@@ -34,14 +34,20 @@ export default function KnowledgeGraph() {
       canvas.height = h * 2;
 
       if (nodesRef.current.length === 0) {
-        nodesRef.current = labels.map((label, i) => ({
-          x: w * 0.15 + Math.random() * w * 0.7,
-          y: h * 0.15 + Math.random() * h * 0.7,
-          vx: (Math.random() - 0.5) * 0.15,
-          vy: (Math.random() - 0.5) * 0.15,
-          label,
-          size: i === 0 ? 7 : 3.5,
-        }));
+        const cx = w / 2;
+        const cy = h / 2;
+        nodesRef.current = labels.map((label, i) => {
+          const angle = (i / labels.length) * Math.PI * 2;
+          const radius = Math.min(w, h) * 0.35;
+          return {
+            x: cx + Math.cos(angle) * radius * (0.7 + Math.random() * 0.3),
+            y: cy + Math.sin(angle) * radius * (0.7 + Math.random() * 0.3),
+            vx: 0,
+            vy: 0,
+            label,
+            size: i === 0 ? 7 : 4,
+          };
+        });
       }
 
       const ctx = canvas.getContext("2d")!;
@@ -55,17 +61,53 @@ export default function KnowledgeGraph() {
 
         ctx.clearRect(0, 0, w, h);
 
+        // Node repulsion
+        for (let i = 0; i < nodes.length; i++) {
+          for (let j = i + 1; j < nodes.length; j++) {
+            const dx = nodes[j].x - nodes[i].x;
+            const dy = nodes[j].y - nodes[i].y;
+            const dist = Math.max(10, Math.hypot(dx, dy));
+            const minDist = 60;
+            if (dist < minDist) {
+              const force = (minDist - dist) / dist * 0.08;
+              const fx = dx * force;
+              const fy = dy * force;
+              nodes[i].vx -= fx;
+              nodes[i].vy -= fy;
+              nodes[j].vx += fx;
+              nodes[j].vy += fy;
+            }
+          }
+        }
+
+        // Edge attraction
+        edges.forEach(([a, b]) => {
+          const dx = nodes[b].x - nodes[a].x;
+          const dy = nodes[b].y - nodes[a].y;
+          const dist = Math.hypot(dx, dy);
+          const target = 80;
+          const force = (dist - target) * 0.002;
+          const fx = (dx / dist) * force;
+          const fy = (dy / dist) * force;
+          nodes[a].vx += fx;
+          nodes[a].vy += fy;
+          nodes[b].vx -= fx;
+          nodes[b].vy -= fy;
+        });
+
+        // Edges draw
         edges.forEach(([a, b]) => {
           const na = nodes[a], nb = nodes[b];
           const lit = hovered === a || hovered === b;
           ctx.beginPath();
           ctx.moveTo(na.x, na.y);
           ctx.lineTo(nb.x, nb.y);
-          ctx.strokeStyle = lit ? "rgba(92,220,255,0.4)" : "rgba(92,220,255,0.07)";
-          ctx.lineWidth = lit ? 1 : 0.5;
+          ctx.strokeStyle = lit ? "rgba(92,220,255,0.4)" : "rgba(92,220,255,0.1)";
+          ctx.lineWidth = lit ? 1.5 : 0.5;
           ctx.stroke();
         });
 
+        // Nodes draw
         nodes.forEach((n, i) => {
           const isH = hovered === i;
           const isNeighbor = !isH && edges.some(
@@ -75,31 +117,33 @@ export default function KnowledgeGraph() {
 
           if (isH) {
             ctx.beginPath();
-            ctx.arc(n.x, n.y, 20, 0, Math.PI * 2);
+            ctx.arc(n.x, n.y, 24, 0, Math.PI * 2);
             ctx.fillStyle = "rgba(92,220,255,0.08)";
             ctx.fill();
           }
 
           ctx.beginPath();
-          ctx.arc(n.x, n.y, lit ? n.size * 1.5 : n.size, 0, Math.PI * 2);
-          ctx.fillStyle = lit ? "#5cdcff" : "rgba(92,220,255,0.2)";
+          ctx.arc(n.x, n.y, lit ? n.size * 1.8 : n.size, 0, Math.PI * 2);
+          ctx.fillStyle = lit ? "#5cdcff" : "rgba(92,220,255,0.25)";
           ctx.fill();
 
-          if (isH || isNeighbor || n.size > 5) {
-            ctx.font = `${isH ? "600 " : ""}11px 'IBM Plex Mono', monospace`;
-            ctx.fillStyle = isH ? "#eaf6fa" : isNeighbor ? "#7ba9b6" : "#5a8a96";
-            ctx.textAlign = "center";
-            ctx.fillText(n.label, n.x, n.y - (lit ? n.size * 1.5 : n.size) - 6);
-          }
+          // Labels — always visible
+          ctx.font = `${isH ? "600 " : ""}11px 'IBM Plex Mono', monospace`;
+          ctx.fillStyle = isH ? "#eaf6fa" : isNeighbor ? "#7ba9b6" : "rgba(122,169,182,0.5)";
+          ctx.textAlign = "center";
+          ctx.fillText(n.label, n.x, n.y - (lit ? n.size * 1.8 : n.size) - 6);
 
+          // Physics
+          n.vx += (w / 2 - n.x) * 0.0001;
+          n.vy += (h / 2 - n.y) * 0.0001;
+          n.vx *= 0.92;
+          n.vy *= 0.92;
           n.x += n.vx;
           n.y += n.vy;
-          if (n.x < 30 || n.x > w - 30) n.vx *= -1;
-          if (n.y < 30 || n.y > h - 30) n.vy *= -1;
-          n.vx += (w / 2 - n.x) * 0.00002;
-          n.vy += (h / 2 - n.y) * 0.00002;
-          n.vx *= 0.999;
-          n.vy *= 0.999;
+          if (n.x < 40) { n.x = 40; n.vx *= -0.5; }
+          if (n.x > w - 40) { n.x = w - 40; n.vx *= -0.5; }
+          if (n.y < 30) { n.y = 30; n.vy *= -0.5; }
+          if (n.y > h - 30) { n.y = h - 30; n.vy *= -0.5; }
         });
 
         animRef.current = requestAnimationFrame(draw);
@@ -108,9 +152,7 @@ export default function KnowledgeGraph() {
       draw();
     };
 
-    // Wait for layout
     requestAnimationFrame(() => requestAnimationFrame(resize));
-
     return () => cancelAnimationFrame(animRef.current);
   }, []);
 
@@ -121,7 +163,7 @@ export default function KnowledgeGraph() {
     const mx = e.clientX - rect.left;
     const my = e.clientY - rect.top;
     let closest = -1;
-    let minDist = 30;
+    let minDist = 35;
     nodesRef.current.forEach((n, i) => {
       const d = Math.hypot(n.x - mx, n.y - my);
       if (d < minDist) { minDist = d; closest = i; }
@@ -129,16 +171,12 @@ export default function KnowledgeGraph() {
     hoveredRef.current = closest >= 0 ? closest : null;
   }, []);
 
-  const onMouseLeave = useCallback(() => {
-    hoveredRef.current = null;
-  }, []);
-
   return (
     <canvas
       ref={canvasRef}
       onMouseMove={onMouseMove}
-      onMouseLeave={onMouseLeave}
-      className="w-full h-[320px] border border-bl-cyan-ghost cursor-crosshair bg-bl-paper-deep"
+      onMouseLeave={() => { hoveredRef.current = null; }}
+      className="w-full h-[360px] border border-bl-cyan-ghost cursor-crosshair bg-bl-paper-deep"
     />
   );
 }
