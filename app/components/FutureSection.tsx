@@ -11,7 +11,7 @@ const items = [
 
 export default function FutureSection() {
   return (
-    <section id="future" className="relative py-20 md:py-28 px-8 md:px-14 bg-bl-paper-edge">
+    <section id="future" className="relative py-20 md:py-28 px-8 md:px-14">
       <Crosshairs />
       <div className="max-w-5xl mx-auto">
         <SectionHeader number="07" title="<strong>Бъдеще</strong> на RAG" sheet="08/08" />

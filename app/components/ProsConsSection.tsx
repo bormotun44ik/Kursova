@@ -21,14 +21,14 @@ const cons = [
 
 export default function ProsConsSection() {
   return (
-    <section id="pros-cons" className="relative py-20 md:py-28 px-8 md:px-14 bg-bl-paper-edge">
+    <section id="pros-cons" className="relative py-20 md:py-28 px-8 md:px-14">
       <Crosshairs />
       <div className="max-w-5xl mx-auto">
         <SectionHeader number="06" title="<strong>Предимства</strong> и ограничения" sheet="07/08" />
 
         <FadeIn>
           <div className="grid md:grid-cols-2 gap-px bg-bl-cyan-ghost">
-            <Block label="ADVANTAGES" className="bg-bl-paper-edge">
+            <Block label="ADVANTAGES" className="">
               <div className="space-y-3">
                 {pros.map((p, i) => (
                   <div key={i} className="flex items-start gap-3">
@@ -38,7 +38,7 @@ export default function ProsConsSection() {
                 ))}
               </div>
             </Block>
-            <Block label="LIMITATIONS" className="bg-bl-paper-edge">
+            <Block label="LIMITATIONS" className="">
               <div className="space-y-3">
                 {cons.map((c, i) => (
                   <div key={i} className="flex items-start gap-3">

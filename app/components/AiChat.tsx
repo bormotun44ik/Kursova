@@ -149,7 +149,7 @@ ${context}`;
   }, [input, loading, messages, apiKey]);
 
   return (
-    <section id="ai-chat" className="relative py-20 md:py-28 px-8 md:px-14 bg-bl-paper-edge">
+    <section id="ai-chat" className="relative py-20 md:py-28 px-8 md:px-14">
       <Crosshairs />
       <div className="max-w-6xl mx-auto">
         <SectionHeader number="05.5" title="<strong>AI Chat</strong> — RAG в действие" sheet="—" />

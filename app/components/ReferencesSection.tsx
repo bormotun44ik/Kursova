@@ -15,7 +15,7 @@ const refs = [
 
 export default function ReferencesSection() {
   return (
-    <section id="references" className="relative py-20 md:py-28 px-8 md:px-14 bg-bl-paper-edge">
+    <section id="references" className="relative py-20 md:py-28 px-8 md:px-14">
       <Crosshairs />
       <div className="max-w-5xl mx-auto">
         <SectionHeader number="08" title="<strong>Източници</strong>" sheet="—" />

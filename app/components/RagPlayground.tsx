@@ -41,7 +41,7 @@ export default function RagPlayground() {
   }, []);
 
   return (
-    <section id="playground" className="relative py-20 md:py-28 px-8 md:px-14 bg-bl-paper-edge">
+    <section id="playground" className="relative py-20 md:py-28 px-8 md:px-14">
       <Crosshairs />
       <div className="max-w-5xl mx-auto">
         <SectionHeader number="05" title="<strong>Live RAG</strong> — Retrieval Demo" sheet="06/09" />

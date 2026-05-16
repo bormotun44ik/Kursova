@@ -20,7 +20,7 @@ const predicates = [
 
 export default function CaseStudySection() {
   return (
-    <section id="case-study" className="relative py-20 md:py-28 px-8 md:px-14 bg-bl-paper-edge">
+    <section id="case-study" className="relative py-20 md:py-28 px-8 md:px-14">
       <Crosshairs />
       <div className="max-w-5xl mx-auto">
         <SectionHeader number="04" title="Система <strong>«Лилит»</strong> — case study" sheet="05/08" />

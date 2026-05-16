@@ -13,7 +13,7 @@ const rows = [
 
 export default function WhatIsRagSection() {
   return (
-    <section id="what-is-rag" className="relative py-20 md:py-28 px-8 md:px-14 bg-bl-paper-edge">
+    <section id="what-is-rag" className="relative py-20 md:py-28 px-8 md:px-14">
       <Crosshairs />
       <div className="max-w-5xl mx-auto">
         <SectionHeader number="02" title="Какво е <strong>RAG</strong>" sheet="03/08" />
