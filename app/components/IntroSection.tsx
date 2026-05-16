@@ -5,7 +5,7 @@ import Crosshairs from "./Crosshairs";
 
 export default function IntroSection() {
   return (
-    <section id="intro" className="relative py-20 md:py-28 px-8 md:px-14">
+    <section id="intro" className="relative py-20 md:py-28 px-8 md:px-14 bg-bl-paper-edge">
       <Crosshairs />
       <div className="max-w-5xl mx-auto">
         <SectionHeader number="01" title="<strong>Проблемът</strong> — защо LLM не стигат" sheet="02/08" />

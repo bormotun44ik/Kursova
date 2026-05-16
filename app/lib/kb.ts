@@ -56,6 +56,32 @@ export const KB: KBDoc[] = [
   // Benchmarks
   { id: 31, text: "RAGAS метрики за оценка на RAG: faithfulness (0–1), answer relevancy (0–1), context precision, context recall. agentmemory v0.9.4 постига R@5 95.2% на LongMemEval benchmark.", tags: ["benchmarks", "ragas"] },
   { id: 32, text: "MTEB (Massive Text Embedding Benchmark): стандарт за оценка на embedding модели. 56 датасета, 8 задачи. Gemini-2-preview е сред top-5 за multilingual (включително руски/български).", tags: ["benchmarks", "mteb"] },
+
+  // Vector databases
+  { id: 33, text: "sqlite-vec е лека vector database разширение за SQLite. Поддържа cosine similarity, L2 distance и inner product. Лилит използва sqlite-vec за L1 warm storage с 16,500 записа.", tags: ["sqlite-vec", "vector-db"] },
+  { id: 34, text: "Популярни vector бази данни: Pinecone (managed cloud), Weaviate (open source), Qdrant (Rust, бърз), Chroma (Python-native), Milvus (distributed). sqlite-vec е лек вариант за single-node.", tags: ["vector-db", "comparison"] },
+  { id: 35, text: "Vector индексиране: HNSW (Hierarchical Navigable Small World) е най-популярният алгоритъм. O(log n) search, високо качество. IVF (Inverted File) е по-бърз но по-неточен. sqlite-vec използва brute-force за малки datasets.", tags: ["vector-db", "indexing"] },
+
+  // Prompt engineering for RAG
+  { id: 36, text: "RAG prompt template: System instruction казва на модела да използва само предоставения контекст. Context section съдържа извлечените документи. User query е оригиналната заявка. Моделът трябва да цитира източници.", tags: ["prompt", "template"] },
+  { id: 37, text: "Token budget management: контекстният прозорец на LLM е ограничен (128K за Claude, 32K за Llama). RAG системата трябва да truncate документи ако надвишат бюджета. Лилит използва budget-aware truncation.", tags: ["prompt", "token-budget"] },
+
+  // Security & privacy
+  { id: 38, text: "RAG и поверителност: данните остават в контролирана среда (on-premises или private cloud). За разлика от fine-tuning, RAG не вгражда чувствителна информация в теглата на модела. Лилит работи изцяло self-hosted.", tags: ["security", "privacy"] },
+  { id: 39, text: "Secret stripping: Лилит използва SHA-256 dedup и secret detection за предотвратяване на изтичане на API ключове, пароли и токени чрез RAG контекст. Session-diversified retrieval ограничава до max 3 документа от една сесия.", tags: ["security", "secrets"] },
+
+  // Practical considerations
+  { id: 40, text: "RAG failure modes: out-of-distribution заявки (темата не е в KB), multi-hop reasoning (нужда от chain от документи), противоречиви източници, stale данни в индекса. Мониторинг на retrieval quality е критичен.", tags: ["failures", "limitations"] },
+  { id: 41, text: "Reciprocal Rank Fusion (RRF): метод за обединяване на резултати от множество retrieval системи. Формула: RRF(d) = Σ 1/(k + rank_i(d)), k=60. Лилит използва RRF за обединяване на BM25 и cosine резултати.", tags: ["rrf", "fusion"] },
+  { id: 42, text: "Contextual Retrieval (Anthropic, 2024): техника за добавяне на контекст към всеки chunk преди индексиране. Обогатява chunks с информация от целия документ. Подобрява retrieval precision с 49%.", tags: ["contextual", "anthropic"] },
+
+  // Lilith specifics
+  { id: 43, text: "Лилит обслужва потребител чрез Telegram бот на сървър с 128GB RAM, 12-core Intel Xeon, Debian 13. Шест agent потребители: Лилит, Тессей (hacking), Solomon, OpenTest, Hivemind (off-limits).", tags: ["lilith", "server"] },
+  { id: 44, text: "cliproxy е Claude API proxy на порт 8317. Primary модел: Claude Sonnet 4.6 с extended thinking. Fallback: Xiaomi mimo-v2-pro (free tier reasoning). Лилит използва cliproxy за всички LLM заявки.", tags: ["lilith", "cliproxy"] },
+  { id: 45, text: "agentmemory v0.9.4: Node.js memory engine (~21.8K LOC, 800 тестове, 121 REST endpoints). Apache-2.0 лиценз. Поддържа RAM vector index, KV snapshots, graph extraction. iii-engine (Rust) за KV/queue substrate.", tags: ["lilith", "agentmemory"] },
+  { id: 46, text: "Semantic dedup plugin: cosine similarity threshold 0.90 блокира дублирани записи при запис в паметта. Предотвратява натрупване на повтаряща се информация в L1 vector DB.", tags: ["lilith", "dedup"] },
+  { id: 47, text: "SOUL.md дефинира личността на Лилит: директност, простота, свободен език. AGENTS.md дефинира memory protocol: ВИНАГИ извикай memory_search преди отговор на нетривиални заявки.", tags: ["lilith", "config"] },
+  { id: 48, text: "Proactive learning: Лилит автоматично търси новини и ги записва в .learnings/LEARNINGS.md на всеки 3 часа. Неактивен от 12 април 2026. Deep harvest: пълно сканиране на main.sqlite веднъж на 24 часа.", tags: ["lilith", "learning"] },
 ];
 
 export function bm25Search(query: string, docs: KBDoc[] = KB): { doc: KBDoc; score: number }[] {

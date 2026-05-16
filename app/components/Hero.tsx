@@ -9,7 +9,7 @@ export default function Hero() {
   return (
     <header
       id="hero"
-      className="relative min-h-screen flex items-center px-8 md:px-14 py-20"
+      className="relative min-h-screen flex items-center px-8 md:px-14 py-20 bg-bl-paper-edge"
     >
       <Crosshairs />
 

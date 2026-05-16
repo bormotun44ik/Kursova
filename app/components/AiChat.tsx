@@ -28,6 +28,7 @@ export default function AiChat() {
   const [topDocs, setTopDocs] = useState<ScanItem[]>([]);
   const [apiKey, setApiKey] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const k = getGroqKey();
@@ -35,7 +36,10 @@ export default function AiChat() {
   }, []);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    const container = chatContainerRef.current;
+    if (container) {
+      container.scrollTop = container.scrollHeight;
+    }
   }, [messages, streaming]);
 
   const saveKey = (k: string) => {
@@ -186,7 +190,7 @@ ${context}`;
                 </span>
               </div>
 
-              <div className="min-h-[320px] max-h-[420px] overflow-y-auto mb-4 space-y-4">
+              <div ref={chatContainerRef} className="min-h-[320px] max-h-[420px] overflow-y-auto mb-4 space-y-4">
                 {messages.length === 0 && !streaming && (
                   <div className="text-bl-ink-5 text-xs text-center py-16">
                     {apiKey ? "Задай въпрос за RAG или системата Лилит." : "Въведи API ключ за да започнеш."}

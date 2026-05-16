@@ -6,7 +6,7 @@ import EmbeddingViz from "./EmbeddingViz";
 
 export default function ComponentsSection() {
   return (
-    <section id="components" className="relative py-20 md:py-28 px-8 md:px-14">
+    <section id="components" className="relative py-20 md:py-28 px-8 md:px-14 bg-bl-paper-edge">
       <Crosshairs />
       <div className="max-w-5xl mx-auto">
         <SectionHeader number="03" title="<strong>Компоненти</strong> на RAG система" sheet="04/08" />
